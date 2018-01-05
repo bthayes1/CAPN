@@ -1,0 +1,52 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+	<head>
+	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<title>CAPN</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="{% static 'contacts/hoja.css' %}"/>
+        {% block head %}{% endblock %}
+	</head>
+
+	<body>
+	    <div id="hojaya">
+            <div class="hoja">CAPN</div>
+        </div>
+
+        <input type="text" id="part_number_search" placeholder="Search..." onkeyup="part_numberQuery(this)">
+        <div id="part_number_results"></div>
+
+
+		{% block content %}{% endblock content %}
+	</body>
+
+	<script>
+
+    var part_number_div = document.getElementById("part_number_results");
+
+    function part_numberDisplay(json) {
+
+    	part_number_div.innerHTML = "";
+
+    	for(i=0;i<json.result.length;i++) {
+    		var a = document.createElement("a");
+            var br = document.createElement("br");
+    		a.appendChild(document.createTextNode(json.result[i].catalog_number + ' \u25AC ' +
+    		    json.result[i].style_number));
+            //a.href = ;
+    		part_number_div.appendChild(a);
+    		part_number_div.appendChild(br);
+    	}
+    }
+
+    function part_numberQuery(element) {
+    	if(element.value.length > 2) {
+            $.get("{% url 'contacts:part_numberQuery' %}"+"?q="+element.value, function(data,status) {
+                part_numberDisplay(data);
+            });
+    	}
+    }
+    </script>
+</html>
