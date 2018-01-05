@@ -7,6 +7,7 @@
 		<title>CAPN</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="{% static 'contacts/hoja.css' %}"/>
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
         {% block head %}{% endblock %}
 	</head>
 
@@ -16,7 +17,8 @@
         </div>
 
         <input type="text" id="part_number_search" placeholder="Search..." onkeyup="part_numberQuery(this)">
-        <div id="part_number_results"></div>
+        <a id="web_search" class="w3-btn w3-black" target="_blank">Search</a>
+        <div id="part_number_results"><ul></ul></div>
 
 
 		{% block content %}{% endblock content %}
@@ -28,21 +30,23 @@
 
     function part_numberDisplay(json) {
 
-    	part_number_div.innerHTML = "";
-
-    	for(i=0;i<json.result.length;i++) {
-    		var a = document.createElement("a");
-            var br = document.createElement("br");
-    		a.appendChild(document.createTextNode(json.result[i].catalog_number + ' \u25AC ' +
-    		    json.result[i].style_number));
-            //a.href = ;
-    		part_number_div.appendChild(a);
-    		part_number_div.appendChild(br);
-    	}
+        var $table = $('<table>').addClass("w3-table").appendTo('#part_number_results');
+        $.each(json.result, function(i, item) {
+            var $tr = $('<tr>').append(
+                $('<td>').text(item.catalog_number),
+                $('<td>').text(item.style_number),
+                $('<td>').text(item.contact__name),
+                $('<td>').text(item.contact__phone),
+                $('<td>').text(item.contact__email),
+                $('<td>').text(item.contact__link)
+            ).appendTo($table);
+        });
     }
 
     function part_numberQuery(element) {
+        part_number_div.innerHTML = "";
     	if(element.value.length > 2) {
+            $('#web_search').prop("href", "https://www.google.com/search?safe=active&q=eaton+"+element.value)
             $.get("{% url 'contacts:part_numberQuery' %}"+"?q="+element.value, function(data,status) {
                 part_numberDisplay(data);
             });
