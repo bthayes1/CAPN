@@ -12,8 +12,8 @@ class IndexView(TemplateView):
 def part_numberQuery(request):
     part_num = request.GET.get('q')
     product_result = {'result':list(Product.objects.filter(
-        Q(catalog_number__icontains=part_num) |
-        Q(style_number__icontains=part_num)).values(
+        Q(catalog_number__istartswith=part_num) |
+        Q(style_number__istartswith=part_num)).values(
             'catalog_number',
             'style_number',
             'contact__name',
