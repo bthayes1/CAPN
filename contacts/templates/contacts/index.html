@@ -2,55 +2,71 @@
 
 <!DOCTYPE html>
 <html>
-	<head>
-	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-		<title>CAPN</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="{% static 'contacts/hoja.css' %}"/>
-        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-        {% block head %}{% endblock %}
-	</head>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<title>CAPN</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'contacts/hoja.css' %}"/>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    {% block head %}{% endblock %}
+</head>
 
-	<body>
-	    <div id="hojaya">
+<body>
+    <div class="w3-panel">
+        <input type="text" id="part_number_search" placeholder="Search..." onkeyup="part_numberQuery(this)">
+    </div>
+    <div class="w3-center"><a id="web_search" class="w3-btn w3-black" target="_blank">Google it</a></div>
+    <div id="part_number_results">
+        <div id="hojaya">
             <div class="hoja">CAPN</div>
         </div>
-
-        <input type="text" id="part_number_search" placeholder="Search..." onkeyup="part_numberQuery(this)">
-        <a id="web_search" class="w3-btn w3-black" target="_blank">Search</a>
-        <div id="part_number_results"><ul></ul></div>
+    </div>
 
 
-		{% block content %}{% endblock content %}
-	</body>
+	{% block content %}{% endblock content %}
+</body>
 
-	<script>
+<script>
 
-    var part_number_div = document.getElementById("part_number_results");
+var part_number_div = document.getElementById("part_number_results");
+var q_length = 0;
 
-    function part_numberDisplay(json) {
+function part_numberDisplay(json) {
 
-        var $table = $('<table>').addClass("w3-table").appendTo('#part_number_results');
-        $.each(json.result, function(i, item) {
-            var $tr = $('<tr>').append(
-                $('<td>').text(item.catalog_number),
-                $('<td>').text(item.style_number),
-                $('<td>').text(item.contact__name),
-                $('<td>').text(item.contact__phone),
-                $('<td>').text(item.contact__email),
-                $('<td>').text(item.contact__link)
-            ).appendTo($table);
+    var $table = $('<table>')
+        .addClass("w3-table-all w3-hoverable")
+        .addClass("w3-hoverable")
+        .appendTo('#part_number_results');
+    $table.append(
+        $('<th>').text('Catalog Number'),
+        $('<th>').text('Style Number'),
+        $('<th>').text('Support'),
+        $('<th>').text('Phone'),
+        $('<th>').text('Email')
+    );
+    $.each(json.result, function(i, item) {
+        var a = $('<a>', {href:item.contact__link,target:"_blank"});
+        a.text(item.contact__name);
+        var $tr = $('<tr>').append(
+            $('<td>').text(item.catalog_number),
+            $('<td>').text(item.style_number),
+            $('<td>').append(a),
+            $('<td>').text(item.contact__phone),
+            $('<td>').text(item.contact__email)
+        ).appendTo($table);
+    });
+}
+
+function part_numberQuery(element) {
+	if(element.value.length > 2) {
+        $('#web_search').prop("href", "https://www.google.com/search?safe=active&q=eaton+"+element.value)
+        $.get("{% url 'contacts:part_numberQuery' %}"+"?q="+element.value, function(data,status) {
+            part_number_div.innerHTML = "";
+            part_numberDisplay(data);
         });
-    }
-
-    function part_numberQuery(element) {
-        part_number_div.innerHTML = "";
-    	if(element.value.length > 2) {
-            $('#web_search').prop("href", "https://www.google.com/search?safe=active&q=eaton+"+element.value)
-            $.get("{% url 'contacts:part_numberQuery' %}"+"?q="+element.value, function(data,status) {
-                part_numberDisplay(data);
-            });
-    	}
-    }
-    </script>
+	} else {
+	    part_number_div.innerHTML = '<div id="hojaya"><div class="hoja">CAPN</div></div>';
+	}
+}
+</script>
 </html>
