@@ -12,6 +12,7 @@
 </head>
 
 <body>
+    <div class="w3-center"><img src="{% static 'contacts/Eaton_Corporation_logo.svg' %}" alt="EATON" width="512" height="143"></div>
     <div class="w3-panel">
         <input type="text" id="part_number_search" placeholder="Search...">
     </div>
@@ -31,6 +32,7 @@
 $( document ).ready(function() {
 
 var part_number_div = document.getElementById("part_number_results");
+var $in = $('#part_number_search')
 
 function part_numberDisplay(json) {
     part_number_div.innerHTML = "";
@@ -50,9 +52,29 @@ function part_numberDisplay(json) {
     $.each(json.result, function(i, item) {
         var a = $('<a>', {href:item.contact__link,target:"_blank"});
         a.text(item.contact__name);
+        catalog_index = item.catalog_number.indexOf($in.val());console.log(catalog_index);
+        if (catalog_index >= 0) {
+            catalogHTML = item.catalog_number.substring(0,catalog_index) +
+                '<span style="background-color:yellow">' +
+                item.catalog_number.substring(catalog_index,catalog_index+$in.val().length) +
+                "</span>" +
+                item.catalog_number.substring(catalog_index + $in.val().length);
+        } else {
+            catalogHTML = item.catalog_number;
+        }
+        style_index = item.style_number.indexOf($('#part_number_search').val())
+        if (style_index >= 0) {
+            styleHTML = item.style_number.substring(0,style_index) +
+                '<span style="background-color:yellow">' +
+                item.style_number.substring(style_index,style_index+$in.val().length) +
+                "</span>" +
+                item.style_number.substring(style_index + $in.val().length);
+        } else {
+            styleHTML = item.style_number;
+        }
         var $tr = $('<tr>').append(
-            $('<td>').text(item.catalog_number),
-            $('<td>').text(item.style_number),
+            $('<td>').html(catalogHTML),
+            $('<td>').html(styleHTML),
             $('<td>').append(a),
             $('<td>').text(item.contact__phone),
             $('<td>').text(item.contact__email)
@@ -61,6 +83,7 @@ function part_numberDisplay(json) {
 }
 
 function part_numberQuery(element) {
+    element.value = element.value.toUpperCase()
 	if (element.value.length > 2) {
         $('#web_search').prop("href", "https://www.google.com/search?safe=active&q=eaton+"+element.value)
         $.get("{% url 'contacts:part_numberQuery' %}"+"?q="+element.value+"&t="+$.now(), function(data,status) {console.log($('#result_table').data("t"));
