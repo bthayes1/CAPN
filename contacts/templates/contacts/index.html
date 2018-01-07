@@ -13,7 +13,7 @@
 
 <body>
     <div class="w3-panel">
-        <input type="text" id="part_number_search" placeholder="Search..." onkeyup="part_numberQuery(this)">
+        <input type="text" id="part_number_search" placeholder="Search...">
     </div>
     <div class="w3-center"><a id="web_search" class="w3-btn w3-black" target="_blank">Google it</a></div>
     <div id="part_number_results">
@@ -28,13 +28,16 @@
 
 <script>
 
+$( document ).ready(function() {
+
 var part_number_div = document.getElementById("part_number_results");
-var q_length = 0;
 
 function part_numberDisplay(json) {
-
+    part_number_div.innerHTML = "";
     var $table = $('<table>')
-        .addClass("w3-table-all w3-hoverable")
+        .prop("id","result_table")
+        .data( "t", json.t )
+        .addClass("w3-table-all")
         .addClass("w3-hoverable")
         .appendTo('#part_number_results');
     $table.append(
@@ -58,15 +61,35 @@ function part_numberDisplay(json) {
 }
 
 function part_numberQuery(element) {
-	if(element.value.length > 2) {
+	if (element.value.length > 2) {
         $('#web_search').prop("href", "https://www.google.com/search?safe=active&q=eaton+"+element.value)
-        $.get("{% url 'contacts:part_numberQuery' %}"+"?q="+element.value, function(data,status) {
-            part_number_div.innerHTML = "";
-            part_numberDisplay(data);
+        $.get("{% url 'contacts:part_numberQuery' %}"+"?q="+element.value+"&t="+$.now(), function(data,status) {console.log($('#result_table').data("t"));
+            $time_stamp = $('#result_table').data("t")
+            if (data.t > $time_stamp || typeof $time_stamp === "undefined") {
+                part_numberDisplay(data);
+            }
         });
 	} else {
 	    part_number_div.innerHTML = '<div id="hojaya"><div class="hoja">CAPN</div></div>';
 	}
 }
+
+function addInputCallback(search_input, callback, delay) {
+    var timer = null;
+    search_input.onkeypress = function(e) {
+        if (timer) {
+            window.clearTimeout(timer);
+        }
+        timer = window.setTimeout( function() {
+            timer = null;
+            callback(e.target);
+        }, delay );
+    };
+    search_input = null;
+}
+
+addInputCallback( document.getElementById("part_number_search"), part_numberQuery, 500 );
+
+});
 </script>
 </html>

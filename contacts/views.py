@@ -11,7 +11,8 @@ class IndexView(TemplateView):
 ####################
 def part_numberQuery(request):
     part_num = request.GET.get('q')
-    product_result = {'q':len(part_num),'result':list(Product.objects.filter(
+    timestamp = request.GET.get('t')
+    product_result = {'t':timestamp,'result':list(Product.objects.filter(
         Q(catalog_number__istartswith=part_num) |
         Q(style_number__istartswith=part_num)).values(
             'catalog_number',
