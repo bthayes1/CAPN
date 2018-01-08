@@ -12,9 +12,15 @@
 </head>
 
 <body>
-    <div class="w3-center"><img src="{% static 'contacts/Eaton_Corporation_logo.svg' %}" alt="EATON" width="512" height="143"></div>
     <div class="w3-panel">
-        <input type="text" id="part_number_search" placeholder="Search...">
+        <div class="w3-center">
+            <img src="{% static 'contacts/Eaton_Corporation_logo.svg' %}" alt="EATON" width="512" height="143">
+        </div>
+    </div>
+    <div class="w3-panel">
+        <div class="w3-center">
+            <input type="text" id="part_number_search" placeholder="Search...">
+        </div>
     </div>
     <div class="w3-panel w3-center">
         <a class="web-search w3-button w3-circle w3-yellow w3-hide" href="https://www.google.com/search?safe=active&q=eaton+" target="_blank">google</a>
@@ -22,12 +28,13 @@
         <a class="web-search w3-button w3-circle w3-blue w3-hide" href="https://www.bing.com/search?q=eaton+" target="_blank">bing</a>
         <a class="web-search w3-button w3-circle w3-purple w3-hide" href="https://search.yahoo.com/search?p=eaton+" target="_blank">yahoo</a>
     </div>
-    <div id="part_number_results">
-        <div id="hojaya">
-            <div class="hoja">CAPN</div>
+    <div class="w3-panel" id="part_number_results">
+        <div class="w3-center">
+            <div id="hojaya">
+                <div class="hoja">CAPN</div>
+            </div>
         </div>
     </div>
-
 
 	{% block content %}{% endblock content %}
 </body>
@@ -58,7 +65,11 @@ function part_numberDisplay(json) {
 
     );
     $.each(json.result, function(i, item) {
-        var a = $('<a>', {href:item.contact__link,target:"_blank"});
+        if (item.contact__link === "#" || item.contact__link === "") {
+        var a = $('<a>');
+        } else {
+            var a = $('<a>', {href:item.contact__link,target:"_blank"});
+        }
         a.text(item.contact__name);
         catalog_index = item.catalog_number.indexOf($in.val());console.log(catalog_index);
         if (catalog_index >= 0) {

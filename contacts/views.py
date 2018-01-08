@@ -9,7 +9,7 @@ class IndexView(TemplateView):
 
 class Product_mntCreateView(CreateView):
     model = Product_mnt
-    fields = ('catalog_number','style_number','contact')
+    fields = ('catalog_number','style_number','contact','note')
     template_name = 'contacts/mnt_create.html'
 
     def get_initial(self):
@@ -26,7 +26,7 @@ class Product_mntCreateView(CreateView):
 
 class Contact_mntCreateView(CreateView):
     model = Contact_mnt
-    fields = ('name','phone','email','link')
+    fields = ('name','phone','email','link','note')
     template_name = 'contacts/mnt_create.html'
 
     def get_initial(self):
@@ -50,7 +50,7 @@ def part_numberQuery(request):
     timestamp = request.GET.get('t')
     product_result = {'t':timestamp,'result':list(Product.objects.filter(
         Q(catalog_number__istartswith=part_num) |
-        Q(style_number__istartswith=part_num)).values(
+        Q(style_number__istartswith=part_num)).select_related('contact').values(
             'catalog_number',
             'style_number',
             'contact__name',
