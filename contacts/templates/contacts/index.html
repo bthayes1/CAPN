@@ -16,7 +16,12 @@
     <div class="w3-panel">
         <input type="text" id="part_number_search" placeholder="Search...">
     </div>
-    <div class="w3-center"><a id="web_search" class="w3-btn w3-black" target="_blank">Google it</a></div>
+    <div class="w3-panel w3-center">
+        <a class="web-search w3-button w3-circle w3-yellow w3-hide" href="https://www.google.com/search?safe=active&q=eaton+" target="_blank">google</a>
+        <a class="web-search w3-button w3-circle w3-red w3-hide" href="https://duckduckgo.com/?q=eaton+" target="_blank">duck</a>
+        <a class="web-search w3-button w3-circle w3-blue w3-hide" href="https://www.bing.com/search?q=eaton+" target="_blank">bing</a>
+        <a class="web-search w3-button w3-circle w3-purple w3-hide" href="https://search.yahoo.com/search?p=eaton+" target="_blank">yahoo</a>
+    </div>
     <div id="part_number_results">
         <div id="hojaya">
             <div class="hoja">CAPN</div>
@@ -45,9 +50,12 @@ function part_numberDisplay(json) {
     $table.append(
         $('<th>').text('Catalog Number'),
         $('<th>').text('Style Number'),
+        $('<th>').html('<a class="w3-button w3-circle w3-black" href="{% url "contacts:product_mnt_create" %}">+</a>'),
         $('<th>').text('Support'),
         $('<th>').text('Phone'),
-        $('<th>').text('Email')
+        $('<th>').text('Email'),
+        $('<th>').html('<a class="w3-button w3-circle w3-black" href="{% url "contacts:contact_mnt_create" %}">+</a>')
+
     );
     $.each(json.result, function(i, item) {
         var a = $('<a>', {href:item.contact__link,target:"_blank"});
@@ -75,9 +83,11 @@ function part_numberDisplay(json) {
         var $tr = $('<tr>').append(
             $('<td>').html(catalogHTML),
             $('<td>').html(styleHTML),
+            $('<td>').html('<a class="w3-button w3-circle w3-black" href="{% url "contacts:product_mnt_create" %}?c='+item.catalog_number+'">&#x270E;</a>'),
             $('<td>').append(a),
             $('<td>').text(item.contact__phone),
-            $('<td>').text(item.contact__email)
+            $('<td>').text(item.contact__email),
+            $('<td>').html('<a class="w3-button w3-circle w3-black" href="{% url "contacts:contact_mnt_create" %}?c='+item.contact__name+'">&#x270E;</a>')
         ).appendTo($table);
     });
 }
@@ -85,7 +95,12 @@ function part_numberDisplay(json) {
 function part_numberQuery(element) {
     element.value = element.value.toUpperCase()
 	if (element.value.length > 2) {
-        $('#web_search').prop("href", "https://www.google.com/search?safe=active&q=eaton+"+element.value)
+        $("a.web-search").each(function() {
+           var $this = $(this);
+           var _href = $this.attr("href");
+           $this.attr("href", _href + element.value);
+        });
+        $("a.web-search").removeClass("w3-hide");
         $.get("{% url 'contacts:part_numberQuery' %}"+"?q="+element.value+"&t="+$.now(), function(data,status) {console.log($('#result_table').data("t"));
             $time_stamp = $('#result_table').data("t")
             if (data.t > $time_stamp || typeof $time_stamp === "undefined") {
@@ -93,13 +108,14 @@ function part_numberQuery(element) {
             }
         });
 	} else {
+	    $("a.web-search").addClass("w3-hide");
 	    part_number_div.innerHTML = '<div id="hojaya"><div class="hoja">CAPN</div></div>';
 	}
 }
 
 function addInputCallback(search_input, callback, delay) {
     var timer = null;
-    search_input.onkeypress = function(e) {
+    search_input.onkeyup = function(e) {
         if (timer) {
             window.clearTimeout(timer);
         }

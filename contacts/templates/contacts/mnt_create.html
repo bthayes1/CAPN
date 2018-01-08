@@ -1,0 +1,25 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<title>CAPN</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+    <form class="w3-form" method="post">
+    {% csrf_token %}
+    <fieldset>
+    <table class="w3-table">
+        {{ form.as_table }}
+    </table>
+    <input class="w3-button w3-black" type="submit" value="Create" />
+    <a class="w3-button w3-black" href="{% url 'contacts:index' %}">Cancel</a>
+    </fieldset>
+    </form>
+</body>
+</html>
