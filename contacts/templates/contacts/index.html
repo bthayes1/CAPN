@@ -23,10 +23,14 @@
         </div>
     </div>
     <div class="w3-panel w3-center">
-        <a class="web-search w3-button w3-circle w3-yellow w3-hide" href="https://www.google.com/search?safe=active&q=eaton+" target="_blank">google</a>
-        <a class="web-search w3-button w3-circle w3-red w3-hide" href="https://duckduckgo.com/?q=eaton+" target="_blank">duck</a>
-        <a class="web-search w3-button w3-circle w3-blue w3-hide" href="https://www.bing.com/search?q=eaton+" target="_blank">bing</a>
-        <a class="web-search w3-button w3-circle w3-purple w3-hide" href="https://search.yahoo.com/search?p=eaton+" target="_blank">yahoo</a>
+        <a class="web-search w3-button w3-circle w3-yellow w3-hide"
+            data-link="https://www.google.com/search?safe=active&q=eaton+" target="_blank">google</a>
+        <a class="web-search w3-button w3-circle w3-red w3-hide"
+            data-link="https://duckduckgo.com/?q=eaton+" target="_blank">duck</a>
+        <a class="web-search w3-button w3-circle w3-blue w3-hide"
+            data-link="https://www.bing.com/search?q=eaton+" target="_blank">bing</a>
+        <a class="web-search w3-button w3-circle w3-purple w3-hide"
+            data-link="https://search.yahoo.com/search?p=eaton+" target="_blank">yahoo</a>
     </div>
     <div class="w3-panel" id="part_number_results">
         <div class="w3-center">
@@ -107,9 +111,8 @@ function part_numberQuery(element) {
     element.value = element.value.toUpperCase()
 	if (element.value.length > 2) {
         $("a.web-search").each(function() {
-           var $this = $(this);
-           var _href = $this.attr("href");
-           $this.attr("href", _href + element.value);
+            $this = $(this);
+            $this.prop("href", $this.data("link") + element.value);
         });
         $("a.web-search").removeClass("w3-hide");
         $.get("{% url 'contacts:part_numberQuery' %}"+"?q="+element.value+"&t="+$.now(), function(data,status) {console.log($('#result_table').data("t"));
