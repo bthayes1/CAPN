@@ -100,7 +100,7 @@ function part_numberDisplay(json) {
             $('<td>').html(styleHTML),
             $('<td>').html('<a class="w3-button w3-circle w3-black" href="{% url "contacts:product_mnt_create" %}?c='+item.catalog_number+'">&#x270E;</a>'),
             $('<td>').append(a),
-            $('<td>').text(item.contact__phone),
+            $('<td>').html(item.contact__phone),
             $('<td>').text(item.contact__email),
             $('<td>').html('<a class="w3-button w3-circle w3-black" href="{% url "contacts:contact_mnt_create" %}?c='+item.contact__name+'">&#x270E;</a>')
         ).appendTo($table);
