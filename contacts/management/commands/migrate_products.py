@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from contacts.models import Product, Contact
 from django.db import IntegrityError
 import pandas as pd

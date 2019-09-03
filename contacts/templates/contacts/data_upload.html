@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>CAPN</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+
+<body>
+{% if form %}
+<div class="w3-panel">
+<form class="w3-form" method="post" enctype="multipart/form-data" action = "{% url 'contacts:data_upload' %}">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <input class="w3-btn w3-black" type="submit" value="Upload">
+
+</form>
+</div>
+{% endif %}
+{% if data %}
+<div>
+    {{ data|safe }}
+</div>
+{% endif %}
+
+</body>
+</html>
