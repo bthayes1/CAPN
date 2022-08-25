@@ -9,5 +9,6 @@ urlpatterns = [
     path('product_mnt_create', views.Product_mntCreateView.as_view(), name='product_mnt_create'),
     path('contact_mnt_create', views.Contact_mntCreateView.as_view(), name='contact_mnt_create'),
     path('part_numberQuery', views.part_numberQuery, name='part_numberQuery'),
+    path('apiQuery', views.apiQuery, name='apiQuery'),
     path('data_upload', views.DataUploadView.as_view(), name='data_upload'),
 ]

@@ -10,6 +10,7 @@ from contacts.forms import DataUploadForm
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import generic
+from django.views.decorators.csrf import csrf_exempt
 
 class IndexView(TemplateView):
     template_name = 'contacts/index.html'
@@ -66,6 +67,23 @@ def part_numberQuery(request):
             'contact__link'))[:42]}
     return JsonResponse(product_result, safe=True)
 
+####################
+### API Query ###
+####################
+@csrf_exempt
+def apiQuery(request):
+    part_num = request.GET.get('q')
+    product_result = {'result':list(Product.objects.filter(
+        Q(catalog_number=part_num) |
+        Q(style_number=part_num)).select_related('contact').values(
+            'catalog_number',
+            'style_number',
+            'contact__name',
+            'contact__phone',
+            'contact__email',
+            'contact__link'))}
+    return JsonResponse(product_result, safe=True)
+
 ##############################
 ### Mass Update            ###
 ##############################
@@ -91,7 +109,7 @@ class DataUploadView(generic.FormView):
                 with transaction.atomic():
                     for row in cdf.itertuples():
                         obj, created = Contact.objects.update_or_create(
-                            name = row.support,
+                            name = row.name,
                             defaults = {
                                 'phone':row.phone,
                                 'email':row.email,
